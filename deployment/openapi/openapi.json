@@ -1,0 +1,202 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Sales API",
+      "description": "API para gerenciamento de vendas.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://api.msfidelis.com.br"
+      }
+    ],
+    "paths": {
+      "/sales": {
+        "post": {
+          "summary": "Criar uma venda",
+          "description": "Cria uma nova venda com os dados fornecidos.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string",
+                      "description": "Nome do produto.",
+                      "example": "O Pequeno Principe"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "Valor do produto.",
+                      "example": 14
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Venda criada com sucesso.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "ID único da venda.",
+                        "example": "9839a2c9-ca50-44ea-8590-c325a717ea5c"
+                      },
+                      "product": {
+                        "type": "string",
+                        "description": "Nome do produto.",
+                        "example": "O Pequeno Principe"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Valor do produto.",
+                        "example": 14
+                      },
+                      "processed": {
+                        "type": "boolean",
+                        "description": "Indica se a venda foi processada.",
+                        "example": false
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "x-amazon-apigateway-integration": {
+            "responses": {
+              "default": {
+                "statusCode": "201"
+              }
+            },
+            "httpMethod": "POST",
+            "type": "http_proxy",
+            "uri": "http://sales-api.sales-cluster.internal.com/sales",
+            "passthroughBehavior": "WHEN_NO_MATCH",
+            "connectionType": "VPC_LINK",
+            "connectionId": "${stageVariables.vpcLinkId}"
+          }
+        }
+      },
+      "/sales/{id}": {
+        "get": {
+          "summary": "Consultar venda",
+          "description": "Retorna os detalhes de uma venda com base no ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "9839a2c9-ca50-44ea-8590-c325a717ea5c"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Detalhes da venda.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "ID único da venda.",
+                        "example": "9839a2c9-ca50-44ea-8590-c325a717ea5c"
+                      },
+                      "product": {
+                        "type": "string",
+                        "description": "Nome do produto.",
+                        "example": "O Pequeno Principe"
+                      },
+                      "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "description": "Valor do produto.",
+                        "example": 14
+                      },
+                      "processed": {
+                        "type": "boolean",
+                        "description": "Indica se a venda foi processada.",
+                        "example": false
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Venda não encontrada."
+            }
+          },
+          "x-amazon-apigateway-integration": {
+            "responses": {
+              "default": {
+                "statusCode": "200"
+              }
+            },
+            "requestParameters": {
+              "integration.request.path.id": "method.request.path.id"
+            },
+            "httpMethod": "GET",
+            "type": "http_proxy",
+            "uri": "http://sales-api.sales-cluster.internal.com/sales/{id}",
+            "passthroughBehavior": "WHEN_NO_MATCH",
+            "connectionType": "VPC_LINK",
+            "connectionId": "${stageVariables.vpcLinkId}"
+          }
+        },
+        "delete": {
+          "summary": "Deletar uma venda",
+          "description": "Remove uma venda com base no ID fornecido.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "9839a2c9-ca50-44ea-8590-c325a717ea5c"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Venda deletada com sucesso."
+            },
+            "404": {
+              "description": "Venda não encontrada."
+            }
+          },
+          "x-amazon-apigateway-integration": {
+            "responses": {
+              "default": {
+                "statusCode": "204"
+              }
+            },
+            "requestParameters": {
+              "integration.request.path.id": "method.request.path.id"
+            },
+            "httpMethod": "DELETE",
+            "type": "http_proxy",
+            "uri": "http://sales-api.sales-cluster.internal.com/sales/{id}",
+            "passthroughBehavior": "WHEN_NO_MATCH",
+            "connectionType": "VPC_LINK",
+            "connectionId": "${stageVariables.vpcLinkId}"
+          }
+        }
+      }
+    }
+  }
